@@ -1,0 +1,50 @@
+# macOS
+.DS_Store
+.ds_store
+
+# Node
+node_modules/
+
+# parse_tsu.py outputs (HTML report, JSON manifest, generated Playwright project)
+# Default location is out/<stem>/. Override with --out-dir.
+out/
+
+# gen_tsu.py outputs (round-trip .tsu files when not pinned with --out)
+*_round.tsu
+*_round_*.html
+*_round_*.json
+
+# Pre-existing in-tree Playwright project (legacy location; new runs go under out/)
+playwright-test/
+
+# Local-only inputs (drop .tsu files here without committing)
+inputs-local/
+
+# Defensive: never commit env files, .tsu inputs, or Playwright artifacts anywhere
+**/.env
+**/.env.*
+!**/.env.example
+**/*.tsu
+**/test-results/
+**/playwright-report/
+
+# Stray legacy artifacts from earlier ad-hoc runs
+testcase.html
+testcase_extracted.txt
+*_steps.json
+*_report.html
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+
+# Editor / IDE
+# Don't ignore .vscode/ wholesale — we ship .vscode/mcp.json for the team.
+# Ignore the personal-settings files specifically:
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/*.code-snippets
+.idea/
+*.swp
