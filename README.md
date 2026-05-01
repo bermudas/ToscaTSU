@@ -292,6 +292,12 @@ diff <(jq -S 'del(.meta.surrogate, .meta.source_file, .meta.revision)' \
 
 A clean round-trip is the canonical correctness check for either tool.
 
+## Future work / parked items
+
+Notes for follow-ups that aren't blocking but are worth picking up later:
+
+- **[`docs/multi-tc-emitter.md`](docs/multi-tc-emitter.md)** — the emitter (`gen_tsu.py`) currently assumes a single-TC base envelope; the parser already handles multi-TC `.tsu` files cleanly. Doc captures the design sketch + acceptance criteria for round-tripping multi-TC bundles.
+
 ## License
 
-See repo. Project layout, scripts, and skills are open for use, modification, and extension. Tricentis Tosca is a trademark of Tricentis GmbH; this project is independent.
+MIT — see [`LICENSE`](LICENSE). Project layout, scripts, and skills are open for use, modification, and extension. Tricentis Tosca is a trademark of Tricentis GmbH; this project is independent.
