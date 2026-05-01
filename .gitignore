@@ -39,6 +39,9 @@ __pycache__/
 *.pyc
 *.pyo
 
+# Playwright MCP runtime cache (console logs etc.)
+.playwright-mcp/
+
 # Editor / IDE
 # Don't ignore .vscode/ wholesale — we ship .vscode/mcp.json for the team.
 # Ignore the personal-settings files specifically:

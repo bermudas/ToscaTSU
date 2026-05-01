@@ -28,6 +28,41 @@ Outputs land in the same directory as the .tsu:
 
 `--force` re-overwrites the spec and config (page objects always regenerate). Without `--force`, hand-edits to the spec are preserved across re-runs.
 
+## Single-TC vs multi-TC `.tsu` (per-case isolation)
+
+A `.tsu` may contain a single test case or many (real-world exports often bundle 10–50 cases). The parser auto-detects and adapts the output layout:
+
+**Single-TC `.tsu`** — flat layout for back-compat:
+```
+out/<stem>/
+├── <stem>_steps.json
+├── <stem>_report.html
+└── playwright-test/
+    ├── playwright.config.ts, package.json, .env.example
+    ├── pages/*.page.ts          (every XModule used by the test)
+    └── tests/<stem>.spec.ts
+```
+
+**Multi-TC `.tsu`** — shared playwright project + per-case audit reports:
+```
+out/<stem>/
+├── playwright-test/             ← SHARED across all cases
+│   ├── playwright.config.ts     ← single config (env-overridable baseURL)
+│   ├── package.json
+│   ├── .env.example             ← UNION of every env var across all cases
+│   ├── pages/                   ← deduplicated union (each module appears once)
+│   └── tests/<area>/<tc_id>_<name>.spec.ts
+└── cases/<tc_id>_<name>/        ← per-case audit outputs
+    ├── steps.json               ← JSON manifest filtered to this case's closure
+    └── report.html              ← HTML report listing only this case's modules
+```
+
+Each case is **isolated by transitive closure** — for a given TestCase, the parser walks `Items / TestStepValues / SubValues / ModuleAttribute / Module / Properties / ParentAttribute / ReusedItem / ParameterLayer*`, recursively following RTB references (an RTB calling another RTB pulls both into the closure). The HTML "Module Catalogue" tab and the per-case JSON manifest only include entities in that closure, so a case with 1300 reachable entities doesn't see the other 4500.
+
+The shared `pages/` dir naturally deduplicates: each per-TC pipeline writes only its own modules; over multiple cases the same module file just gets the same content written twice (idempotent). `.env.example` is written once after all cases are processed, with the union of every `process.env.X` reference any spec uses — plus the CP[*] traceback hints showing which Tosca config-parameter each var corresponds to.
+
+The `<area>` folder under `tests/` comes from the Tosca TCFolder hierarchy (immediate parent folder name, sanitized; generic workspace folders like `TestCases`/`Library` are skipped). When all cases share a parent, they all land in `tests/<area>/`. When TCs span multiple folders, the layout naturally splits.
+
 ## Generated spec, ready-to-run scaffolding
 
 Each generated `tests/<stem>.spec.ts` is **self-contained**:
